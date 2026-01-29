@@ -55,13 +55,10 @@
 <div class="header">
     <div class="logo-box">⛰️⛰️⛰️ ANTAM BOOT SYSTEM <span class="bumn-tag">BUMN</span></div>
     
-    <div id="realtime-clock" style="font-family: monospace; font-weight: bold; color: #1a252f; margin-top: 5px; font-size: 16px;">
-        00:00:00
-    </div>
-    <div id="realtime-date" style="font-size: 11px; color: #666;">Kamis, 29 Januari 2026</div>
+    <div id="realtime-clock" style="font-family: monospace; font-weight: bold; color: #1a252f; margin-top: 5px; font-size: 16px;">00:00:00</div>
+    <div id="realtime-date" style="font-size: 11px; color: #666;">Memuat tanggal...</div>
     <div style="font-size: 10px; color: #666; font-style: italic;">Rivan hatt by system anonymous</div>
 </div>
-
 
 <div id="page-login">
     <div class="card" style="max-width: 400px; margin: 50px auto; text-align: center;">
@@ -88,12 +85,12 @@
                 <span>Lisensi: <b id="u-lic-stat" style="color:var(--gold)">Free</b></span>
                 <span>Limit Input: <b id="u-limit-view">1</b></span>
             </div>
-            <label style="font-size:11px; color:var(--accent)">Data Masal (Format: Nama|NIK|Alamat):</label>
-            <textarea id="massInput" rows="5" placeholder="Contoh:&#10;Andi|1604xxx|Jakarta&#10;Budi|1604xxx|Bandung"></textarea>
+            <label style="font-size:11px; color:var(--accent)">Data Masal (Format: Nama|NIK|WA|Email):</label>
+            <textarea id="massInput" rows="5" placeholder="Budi|1604xxx|0812xxx|budi@mail.com"></textarea>
             <label>Jadwal Mulai:</label>
             <input type="time" id="startTime">
             <div id="console">> System Ready. Masukkan data dan klik Start.</div>
-            <button class="btn btn-accent" id="btnRun" onclick="runBoot()">MULAI AUTO BOOT</button>
+            <button class="btn btn-accent" id="btnRun" onclick="runBoot()">MULAI AUTO BOOT (MULTI-TAB)</button>
         </div>
         <div id="u-res" class="card hidden">
             <h4 style="color:var(--accent)">✅ Antrian Berhasil</h4>
@@ -105,121 +102,57 @@
         <div class="card">
             <h3>Pengaturan Akun</h3>
             <label>Nama Akun:</label><input type="text" id="u-name" placeholder="Nama Lengkap">
-            <label>Gmail (1x Input):</label><input type="email" id="u-mail" placeholder="contoh@gmail.com">
-            <label>Metode Pembayaran:</label>
-            <select id="u-bank"><option>BCA</option><option>DANA</option><option>OVO</option><option>GOPAY</option></select>
-            <label>No Rekening / HP:</label><input type="number" id="u-rek-num" placeholder="08xxx / 123xxx">
+            <label>Gmail:</label><input type="email" id="u-mail" placeholder="contoh@gmail.com">
             <button class="btn btn-accent" onclick="saveAcc()">SIMPAN PERUBAHAN</button>
         </div>
     </div>
 
     <div id="u-lic" class="utab-content hidden">
-        <div id="lic-shop-container">
-            </div>
-        
+        <div id="lic-shop-container"></div>
         <div id="pay-modal" class="card hidden" style="border: 2px solid var(--gold); text-align: center;">
             <h3 style="color:var(--gold)">💰 Instruksi Pembayaran</h3>
             <div class="timer" id="pay-timer">05:00</div>
-            <p style="font-size:12px;">Transfer tepat waktu agar sistem otomatis memproses.</p>
             <div style="background:#0a192f; padding:15px; border-radius:8px; margin:10px 0; border:1px solid #233554;">
-                <span id="pay-bank">BCA</span>: <b id="pay-num">12345678</b> 
+                <span id="pay-bank">BCA</span>: <b id="pay-num">883521xxx</b> 
                 <button class="btn-copy" onclick="copyRek()">SALIN</button>
-                <br><small>A/N: <span id="pay-name">Admin Antam</span></small>
             </div>
             <p>Total: <b id="pay-total" style="color:var(--accent)">Rp 0</b></p>
             <button class="btn btn-accent" onclick="confirmPay()">SAYA SUDAH BAYAR</button>
-            <button class="btn" style="background:transparent; color:gray; font-size:11px;" onclick="location.reload()">Batalkan</button>
+            <button class="btn" onclick="location.reload()">Batalkan</button>
         </div>
     </div>
 </div>
-
-<div id="page-admin" class="hidden">
-    <div class="nav-tabs">
-        <button onclick="atab('a-user',this)" class="anav active">DATA USERS</button>
-        <button onclick="atab('a-config',this)" class="anav">LISENSI & REK</button>
-        <button onclick="location.reload()" style="color:var(--danger)">LOGOUT</button>
-    </div>
-
-    <div id="a-user" class="atab-content">
-        <div class="card">
-            <h3>Database User Terdaftar</h3>
-            <div class="scroll-x">
-                <table>
-                    <thead><tr><th>Nama</th><th>Gmail</th><th>Lisensi</th><th>Limit</th><th>Aksi</th></tr></thead>
-                    <tbody id="a-user-list"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="a-config" class="atab-content hidden">
-        <div class="card">
-            <h3>Atur Rekening Pembayaran</h3>
-            <input type="text" id="ad-bank" placeholder="Nama Bank/E-Wallet">
-            <input type="text" id="ad-rek-num" placeholder="Nomor Rekening">
-            <input type="text" id="ad-rek-name" placeholder="Atas Nama Admin">
-            <button class="btn btn-accent" onclick="updateAdminRek()">UPDATE REKENING</button>
-        </div>
-        <div class="card">
-            <h3>Atur Produk & Limit Boot</h3>
-            <input type="text" id="ad-p-name" placeholder="Nama Lisensi (ex: Premium)">
-            <input type="number" id="ad-p-price" placeholder="Harga (Rp)">
-            <input type="number" id="ad-p-limit" placeholder="Limit Input Data (ex: 30)">
-            <button class="btn btn-accent" onclick="addProd()">TAMBAH / UPDATE PRODUK</button>
-            <div id="ad-p-list" style="margin-top:15px;"></div>
-        </div>
-        <div id="ad-req-list" class="card">
-            <h3>Persetujuan Lisensi</h3>
-            <p style="font-size:11px; color:gray;">Menunggu pembayaran user...</p>
-        </div>
-    </div>
-</div>
-
-<div class="footer">Rivan Hatt by System Anonymous</div>
 
 <script>
-    // --- DATABASE ---
+    // --- DATABASE 3 PRODUK ---
     let products = JSON.parse(localStorage.getItem('ant_p')) || [
         {name:'Basic', price:150000, limit:5},
-        {name:'Premium', price:500000, limit:30}
+        {name:'Pro', price:350000, limit:15},
+        {name:'Ultimate', price:750000, limit:30}
     ];
     let admin_rek = JSON.parse(localStorage.getItem('ant_r')) || {bank:'BCA', num:'883521xxx', name:'Rivan Admin'};
-    let user_profile = {name:'User Aktif', mail:'-', bank:'BCA', rek_num:'-', lic:'Free', limit:1};
+    let user_profile = {name:'User Aktif', lic:'Free', limit:1};
     let timerInter;
-    let selectedLic = "";
 
-    // --- AUTH ---
     function auth() {
         const k = document.getElementById('mainKey').value.toUpperCase();
-        if(k === 'ADMIN') { show('page-admin'); renderAdmin(); }
+        if(k === 'ADMIN') { window.location.reload(); /* Admin logic can be added */ }
         else { 
-            user_profile.lic = k;
-            // Cari limit berdasarkan key
             const found = products.find(p => p.name.toUpperCase() === k);
+            user_profile.lic = k;
             user_profile.limit = found ? found.limit : 1;
-            
             document.getElementById('u-lic-stat').innerText = user_profile.lic;
             document.getElementById('u-limit-view').innerText = user_profile.limit;
             show('page-user'); 
             renderUserShop(); 
         }
     }
-    function show(id) { document.getElementById('page-login').classList.add('hidden'); document.getElementById(id).classList.remove('hidden'); }
 
-    // --- USER LOGIC ---
+    function show(id) { document.getElementById('page-login').classList.add('hidden'); document.getElementById(id).classList.remove('hidden'); }
     function utab(id,b) {
         document.querySelectorAll('.utab-content').forEach(c=>c.classList.add('hidden'));
         document.querySelectorAll('.unav').forEach(n=>n.classList.remove('active'));
         document.getElementById(id).classList.remove('hidden'); b.classList.add('active');
-    }
-
-    function saveAcc() {
-        user_profile.name = document.getElementById('u-name').value;
-        user_profile.mail = document.getElementById('u-mail').value;
-        user_profile.rek_num = document.getElementById('u-rek-num').value;
-        document.getElementById('u-mail').readOnly = true;
-        document.getElementById('u-rek-num').readOnly = true;
-        alert("Profil Disimpan. Perubahan email/rek harus hubungi admin.");
     }
 
     function renderUserShop() {
@@ -228,175 +161,67 @@
         products.forEach(p => {
             div.innerHTML += `<div class="card">
                 <h4>${p.name} License</h4>
-                <p>Limit Input: <b>${p.limit} Data</b></p>
+                <p>Limit: <b>${p.limit} Data</b></p>
                 <p style="color:var(--accent); font-size:18px;">Rp ${p.price.toLocaleString()}</p>
                 <button class="btn btn-accent" onclick="openPay('${p.name}', ${p.price})">BELI SEKARANG</button>
             </div>`;
         });
     }
 
-    function openPay(name, price) {
-        selectedLic = name;
-        document.getElementById('lic-shop-container').classList.add('hidden');
-        document.getElementById('pay-modal').classList.remove('hidden');
-        document.getElementById('pay-bank').innerText = admin_rek.bank;
-        document.getElementById('pay-num').innerText = admin_rek.num;
-        document.getElementById('pay-name').innerText = admin_rek.name;
-        document.getElementById('pay-total').innerText = "Rp " + price.toLocaleString();
-        startTimer(300);
-    }
-
-    function startTimer(sec) {
-        clearInterval(timerInter);
-        timerInter = setInterval(() => {
-            let m = Math.floor(sec/60), s = sec%60;
-            document.getElementById('pay-timer').innerText = `${m<10?'0':''}${m}:${s<10?'0':''}${s}`;
-            if(sec-- <= 0) { clearInterval(timerInter); alert("Waktu Habis!"); location.reload(); }
-        }, 1000);
-    }
-
-    function confirmPay() {
-        const waLink = `https://wa.me/6283854178752?text=Halo%20Admin%2C%20saya%20sudah%20melakukan%20pembayaran%20untuk%20Lisensi%20${selectedLic}.%20Berikut%20bukti%20pembayarannya.`;
-        
-        // Kirim notif ke admin dashboard (simulasi)
-        document.getElementById('ad-req-list').innerHTML = `<div class="card" style="border:1px solid var(--accent)">
-            <b>${user_profile.name}</b> meminta aktivasi <b>${selectedLic}</b><br>
-            <button class="btn btn-accent" onclick="approveUser('${user_profile.name}', '${selectedLic}')">SETUJUI & AKTIFKAN</button>
-        </div>`;
-        
-        window.open(waLink, '_blank');
-        alert("Format WhatsApp Berhasil Dibuat. Silakan kirim bukti transfer di WA.");
-    }
-
-    function copyRek() { navigator.clipboard.writeText(admin_rek.num); alert("Nomor Rekening Disalin!"); }
-
+    // --- CORE BOOT LOGIC (PARALLEL 30 TAB) ---
     async function runBoot() {
         const input = document.getElementById('massInput').value.trim();
         if(!input) return alert("Data masih kosong!");
         const lines = input.split('\n');
         
-        // Validasi Limit
         if(lines.length > user_profile.limit) {
-            return alert(`Maaf, lisensi Anda (${user_profile.lic}) maksimal hanya ${user_profile.limit} data!`);
+            return alert(`Limit lisensi ${user_profile.lic} hanya ${user_profile.limit} data!`);
         }
 
         const log = document.getElementById('console');
         document.getElementById('btnRun').disabled = true;
 
         for(let i=0; i<lines.length; i++) {
-            log.innerHTML += `<br>[${new Date().toLocaleTimeString()}] Memproses: ${lines[i].split('|')[0]}...`;
-            log.scrollTop = log.scrollHeight;
-            await new Promise(r => setTimeout(r, 2000)); // Simulasi War
-            addRes(lines[i].split('|')[0], i);
+            const [nama, nik, wa, email] = lines[i].split('|');
             
-            if((i+1)%5===0 && i!==lines.length) { 
-                alert("SISTEM BERHENTI! WAJIB Ganti IP (Mode Pesawat 5 detik)."); 
-            }
+            // Kirim Perintah ke Tab ID sesuai urutan (0, 1, 2... 29)
+            localStorage.setItem(`antam_cmd_${i}`, 'FIRE');
+            localStorage.setItem(`antam_nik_${i}`, nik);
+            localStorage.setItem(`antam_nama_${i}`, nama);
+            localStorage.setItem(`antam_wa_${i}`, wa || '08123456789');
+            localStorage.setItem(`antam_mail_${i}`, email || 'user@gmail.com');
+
+            log.innerHTML += `<br>[${new Date().toLocaleTimeString()}] 🚀 Tab ${i} Terpemicu: ${nama}`;
+            log.scrollTop = log.scrollHeight;
+            
+            // Jeda 1 detik antar trigger supaya tidak crash
+            await new Promise(r => setTimeout(r, 1000));
+            addRes(nama, i);
         }
-        log.innerHTML += `<br><span style="color:var(--accent)">[Selesai] Semua data diproses.</span>`;
+        
+        log.innerHTML += `<br><span style="color:var(--accent)">[Selesai] Semua sinyal terkirim ke 30 Tab!</span>`;
         document.getElementById('btnRun').disabled = false;
     }
 
     function addRes(n, i) {
         document.getElementById('u-res').classList.remove('hidden');
-        document.getElementById('u-res-list').innerHTML += `<div class="card" style="font-size:10px; margin:2px;"><b>${n}</b><br><a href="#" style="color:var(--accent)">Download Kartu</a></div>`;
+        document.getElementById('u-res-list').innerHTML += `<div class="card" style="font-size:10px; margin:2px;"><b>${n}</b><br>Sent to Tab ${i}</div>`;
     }
 
-    // --- ADMIN LOGIC ---
-    function atab(id,b) {
-        document.querySelectorAll('.atab-content').forEach(c=>c.classList.add('hidden'));
-        document.querySelectorAll('.anav').forEach(n=>n.classList.remove('active'));
-        document.getElementById(id).classList.remove('hidden'); b.classList.add('active');
-    }
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('realtime-clock').innerText = `${h}:${m}:${s}`;
+        document.getElementById('realtime-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-    function renderAdmin() {
-        // Render Tabel User
-        const body = document.getElementById('a-user-list');
-        body.innerHTML = `<tr>
-            <td>${user_profile.name}</td>
-            <td>${user_profile.mail}</td>
-            <td>${user_profile.lic}</td>
-            <td>${user_profile.limit}</td>
-            <td><button onclick="editAdminUser()" style="color:var(--accent)">EDIT</button></td>
-        </tr>`;
-        
-        // Render Daftar Produk
-        const plist = document.getElementById('ad-p-list'); plist.innerHTML = '<b>Produk Aktif:</b>';
-        products.forEach((p, i) => {
-            plist.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid #233554; padding:5px 0;">
-            <span>${p.name} (Limit: ${p.limit}) - Rp${p.price.toLocaleString()}</span><button onclick="delP(${i})" style="color:red">X</button></div>`;
-        });
-    }
-
-    function updateAdminRek() {
-        admin_rek = {bank: document.getElementById('ad-bank').value, num: document.getElementById('ad-rek-num').value, name: document.getElementById('ad-rek-name').value};
-        localStorage.setItem('ant_r', JSON.stringify(admin_rek));
-        alert("Rekening Admin Diperbarui!");
-    }
-
-    function addProd() {
-        const n = document.getElementById('ad-p-name').value;
-        const p = document.getElementById('ad-p-price').value;
-        const l = document.getElementById('ad-p-limit').value;
-        if(n && p && l) {
-            products.push({name: n, price: parseInt(p), limit: parseInt(l)});
-            localStorage.setItem('ant_p', JSON.stringify(products));
-            renderAdmin();
-            alert("Produk Berhasil Ditambah!");
+        const userStartTime = document.getElementById('startTime').value;
+        if (userStartTime === `${h}:${m}` && s === "00" && !document.getElementById('btnRun').disabled) {
+            runBoot(); 
         }
     }
-
-    function delP(i) { products.splice(i,1); localStorage.setItem('ant_p', JSON.stringify(products)); renderAdmin(); }
-
-    function approveUser(userName, licName) {
-        const found = products.find(p => p.name === licName);
-        user_profile.lic = licName;
-        user_profile.limit = found ? found.limit : 1;
-        document.getElementById('ad-req-list').innerHTML = '<p>Tidak ada permintaan.</p>';
-        renderAdmin();
-        alert(`Lisensi ${licName} milik ${userName} AKTIF!`);
-    }
-
-    function editAdminUser() {
-        const nl = prompt("Ubah Limit Input:", user_profile.limit);
-        const nc = prompt("Ubah Status Lisensi:", user_profile.lic);
-        if(nl) user_profile.limit = parseInt(nl);
-        if(nc) user_profile.lic = nc;
-        renderAdmin();
-    }
-// --- FUNGSI JAM REAL-TIME & AUTO START ---
-function updateClock() {
-    const now = new Date();
-    
-    // 1. Bagian Format Jam
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    document.getElementById('realtime-clock').innerText = `${h}:${m}:${s}`;
-
-    // 2. Bagian Format Tanggal Indonesia
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dateStr = now.toLocaleDateString('id-ID', options);
-    document.getElementById('realtime-date').innerText = dateStr;
-
-    // 3. Bagian Tambahan: AUTO START BOOT
-    const currentTime = `${h}:${m}`; // Gunakan backtick (tombol sebelah angka 1)
-    const userStartTime = document.getElementById('startTime').value;
-    const btnRun = document.getElementById('btnRun');
-
-    // Cek jika jam cocok dan detik berada di 00
-    if (userStartTime === currentTime && s === "00" && !btnRun.disabled) {
-        const log = document.getElementById('console');
-        log.innerHTML += `<br><span style="color:var(--gold)">[SYSTEM] Waktu jadwal tercapai! Memulai otomatis...</span>`;
-        runBoot(); 
-    }
-}
-
-// Cukup panggil satu kali saja di sini
-setInterval(updateClock, 1000);
-updateClock();
-
+    setInterval(updateClock, 1000);
 </script>
-
 </body>
 </html>
