@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antam Boot System - BUMN</title>
+    <style>
+        :root {
+            --primary: #0a192f;
+            --secondary: #112240;
+            --accent: #64ffda;
+            --gold: #f1c40f;
+            --danger: #ff4d4d;
+            --text-main: #ccd6f6;
+            --bg: #0a192f;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text-main); font-size: 14px; }
+        .hidden { display: none !important; }
+
+        /* HEADER */
+        .header { background: #ffffff; padding: 15px; text-align: center; border-bottom: 5px solid var(--gold); color: #333; }
+        .logo-box { font-size: 22px; font-weight: bold; }
+        .bumn-tag { background: #003399; color: white; padding: 2px 6px; font-size: 10px; border-radius: 4px; }
+
+        /* NAV */
+        .nav-tabs { display: flex; background: var(--secondary); overflow-x: auto; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--accent); }
+        .nav-tabs button { flex: 1; padding: 15px; border: none; background: none; color: white; cursor: pointer; white-space: nowrap; font-size: 12px; font-weight: bold; }
+        .nav-tabs button.active { border-bottom: 3px solid var(--accent); color: var(--accent); }
+
+        /* CARDS */
+        .card { background: var(--secondary); padding: 15px; border-radius: 10px; margin: 10px; border: 1px solid rgba(100,255,218,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        input, select, textarea { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #233554; border-radius: 5px; background: #0a192f; color: white; box-sizing: border-box; }
+        
+        .btn { padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; transition: 0.3s; }
+        .btn-accent { background: var(--accent); color: #0a192f; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-copy { background: #3498db; color: white; font-size: 11px; width: auto; padding: 5px 10px; margin-left: 10px; border: none; border-radius: 3px; cursor: pointer; }
+
+        /* CONSOLE */
+        #console { background: #000; color: #0f0; padding: 10px; border-radius: 5px; height: 180px; overflow-y: auto; font-family: monospace; font-size: 11px; border: 1px solid var(--accent); line-height: 1.5; }
+        
+        /* TABLE */
+        .scroll-x { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+        th, td { border: 1px solid #233554; padding: 10px; text-align: left; }
+        th { background: #1d2d50; color: var(--accent); }
+
+        .timer { font-size: 24px; font-weight: bold; color: var(--danger); text-align: center; margin: 10px 0; border: 1px dashed var(--danger); padding: 5px; border-radius: 5px; }
+        .footer { text-align: center; font-size: 10px; padding: 15px; color: #8892b0; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo-box">⛰️⛰️⛰️ ANTAM BOOT SYSTEM <span class="bumn-tag">BUMN</span></div>
+    <div id="realtime-clock" style="font-family: monospace; font-weight: bold; color: #1a252f; margin-top: 5px; font-size: 16px;">00:00:00</div>
+    <div id="realtime-date" style="font-size: 11px; color: #666;">Memuat tanggal...</div>
+    <div style="font-size: 10px; color: #666; font-style: italic;">Rivan hatt by system anonymous</div>
+</div>
+
+<div id="page-login">
+    <div class="card" style="max-width: 400px; margin: 50px auto; text-align: center;">
+        <h2 style="color:var(--accent)">System Activation</h2>
+        <p style="font-size:12px;">Masukkan Key Lisensi (Contoh: ULTIMATE)</p>
+        <input type="text" id="mainKey" placeholder="LICENSE KEY">
+        <button class="btn btn-accent" onclick="auth()">MASUK KE PANEL</button>
+        <a href="https://wa.me/6283854178752" style="color:var(--accent); display:block; margin-top:15px; text-decoration:none; font-size:12px;">Belum punya Key? Chat Admin</a>
+    </div>
+</div>
+
+<div id="page-user" class="hidden">
+    <div class="nav-tabs">
+        <button onclick="utab('u-dash',this)" class="unav active">WAR BOOT</button>
+        <button onclick="utab('u-acc',this)" class="unav">PROFIL</button>
+        <button onclick="utab('u-lic',this)" class="unav">BELI LISENSI</button>
+        <button onclick="location.reload()" style="color:var(--danger)">LOGOUT</button>
+    </div>
+
+    <div id="u-dash" class="utab-content">
+        <div class="card">
+            <h3>🚀 Antam Console</h3>
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px;">
+                <span>Lisensi: <b id="u-lic-stat" style="color:var(--gold)">Free</b></span>
+                <span>Limit Input: <b id="u-limit-view">1</b></span>
+            </div>
+            <label style="font-size:11px; color:var(--accent)">Format: Nama|NIK|WA|Email</label>
+            <textarea id="massInput" rows="5" placeholder="Budi|1604xxx|0812xxx|budi@mail.com"></textarea>
+            <label>Jadwal Mulai:</label>
+            <input type="time" id="startTime">
+            <div id="console">> System Ready. Masukkan data dan klik Start.</div>
+            <button class="btn btn-accent" id="btnRun" onclick="runBoot()">MULAI AUTO BOOT</button>
+        </div>
+        <div id="u-res" class="card hidden">
+            <h4 style="color:var(--accent)">✅ Antrian Berhasil</h4>
+            <div id="u-res-list" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+        </div>
+    </div>
+
+    <div id="u-acc" class="utab-content hidden">
+        <div class="card">
+            <h3>Pengaturan Akun</h3>
+            <label>Nama Akun:</label><input type="text" id="u-name" placeholder="Nama Lengkap">
+            <label>Gmail:</label><input type="email" id="u-mail" placeholder="contoh@gmail.com">
+            <label>Metode Pembayaran:</label>
+            <select id="u-bank"><option>BCA</option><option>DANA</option><option>OVO</option></select>
+            <label>No Rekening / HP:</label><input type="number" id="u-rek-num" placeholder="08xxx / 123xxx">
+            <button class="btn btn-accent" onclick="saveAcc()">SIMPAN PERUBAHAN</button>
+        </div>
+    </div>
+
+    <div id="u-lic" class="utab-content hidden">
+        <div id="lic-shop-container"></div>
+        <div id="pay-modal" class="card hidden" style="border: 2px solid var(--gold); text-align: center;">
+            <h3 style="color:var(--gold)">💰 Instruksi Pembayaran</h3>
+            <div class="timer" id="pay-timer">05:00</div>
+            <div style="background:#0a192f; padding:15px; border-radius:8px; margin:10px 0; border:1px solid #233554;">
+                <span id="pay-bank">BCA</span>: <b id="pay-num">12345678</b> 
+                <button class="btn-copy" onclick="copyRek()">SALIN</button>
+            </div>
+            <p>Total: <b id="pay-total" style="color:var(--accent)">Rp 0</b></p>
+            <button class="btn btn-accent" onclick="confirmPay()">SAYA SUDAH BAYAR</button>
+            <button class="btn" onclick="location.reload()">Batalkan</button>
+        </div>
+    </div>
+</div>
+
+<div id="page-admin" class="hidden">
+    <div class="nav-tabs">
+        <button onclick="atab('a-user',this)" class="anav active">DATA USERS</button>
+        <button onclick="atab('a-config',this)" class="anav">LISENSI & REK</button>
+        <button onclick="location.reload()" style="color:var(--danger)">LOGOUT</button>
+    </div>
+
+    <div id="a-user" class="atab-content">
+        <div class="card">
+            <h3>Database User Terdaftar</h3>
+            <div class="scroll-x">
+                <table>
+                    <thead><tr><th>Nama</th><th>Gmail</th><th>Lisensi</th><th>Limit</th><th>Aksi</th></tr></thead>
+                    <tbody id="a-user-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="a-config" class="atab-content hidden">
+        <div class="card">
+            <h3>Atur Rekening Admin</h3>
+            <input type="text" id="ad-bank" placeholder="Bank">
+            <input type="text" id="ad-rek-num" placeholder="Nomor Rek">
+            <input type="text" id="ad-rek-name" placeholder="Atas Nama">
+            <button class="btn btn-accent" onclick="updateAdminRek()">UPDATE REKENING</button>
+        </div>
+        <div class="card">
+            <h3>Atur Produk & Limit</h3>
+            <input type="text" id="ad-p-name" placeholder="Nama Lisensi">
+            <input type="number" id="ad-p-price" placeholder="Harga">
+            <input type="number" id="ad-p-limit" placeholder="Limit Data">
+            <button class="btn btn-accent" onclick="addProd()">TAMBAH PRODUK</button>
+            <div id="ad-p-list" style="margin-top:15px;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">Rivan Hatt by System Anonymous</div>
+
+<script>
+    // --- DATABASE ---
+    let products = JSON.parse(localStorage.getItem('ant_p')) || [
+        {name:'BASIC', price:150000, limit:5},
+        {name:'ULTIMATE', price:500000, limit:30}
+    ];
+    let admin_rek = JSON.parse(localStorage.getItem('ant_r')) || {bank:'BCA', num:'883521xxx', name:'Rivan Admin'};
+    let user_profile = JSON.parse(localStorage.getItem('u_prof')) || {name:'User Aktif', mail:'-', bank:'BCA', rek_num:'-', lic:'Free', limit:1};
+    let timerInter, selectedLic = "";
+
+    // --- AUTH ---
+    function auth() {
+        const k = document.getElementById('mainKey').value.toUpperCase();
+        if(k === 'ADMIN') { show('page-admin'); renderAdmin(); }
+        else { 
+            const found = products.find(p => p.name === k);
+            if(found) {
+                user_profile.lic = found.name;
+                user_profile.limit = found.limit;
+            }
+            document.getElementById('u-lic-stat').innerText = user_profile.lic;
+            document.getElementById('u-limit-view').innerText = user_profile.limit;
+            show('page-user'); 
+            renderUserShop(); 
+        }
+    }
+
+    function show(id) { document.getElementById('page-login').classList.add('hidden'); document.getElementById(id).classList.remove('hidden'); }
+
+    // --- NAV LOGIC ---
+    function utab(id,b) {
+        document.querySelectorAll('.utab-content').forEach(c=>c.classList.add('hidden'));
+        document.querySelectorAll('.unav').forEach(n=>n.classList.remove('active'));
+        document.getElementById(id).classList.remove('hidden'); b.classList.add('active');
+    }
+    function atab(id,b) {
+        document.querySelectorAll('.atab-content').forEach(c=>c.classList.add('hidden'));
+        document.querySelectorAll('.anav').forEach(n=>n.classList.remove('active'));
+        document.getElementById(id).classList.remove('hidden'); b.classList.add('active');
+    }
+
+    // --- BOOT LOGIC (MULTI-TAB) ---
+    async function runBoot() {
+        const input = document.getElementById('massInput').value.trim();
+        if(!input) return alert("Data kosong!");
+        const lines = input.split('\n');
+        if(lines.length > user_profile.limit) return alert("Limit Lisensi Tidak Cukup!");
+
+        const log = document.getElementById('console');
+        document.getElementById('btnRun').disabled = true;
+
+        for(let i=0; i<lines.length; i++) {
+            const [nama, nik, wa, mail] = lines[i].split('|');
+            
+            // Kirim ke LocalStorage untuk ditangkap Tampermonkey
+            localStorage.setItem(`antam_cmd_${i}`, 'FIRE');
+            localStorage.setItem(`antam_nama_${i}`, nama);
+            localStorage.setItem(`antam_nik_${i}`, nik);
+            localStorage.setItem(`antam_wa_${i}`, wa || '08123456789');
+            localStorage.setItem(`antam_mail_${i}`, mail || 'user@gmail.com');
+
+            log.innerHTML += `<br>[${new Date().toLocaleTimeString()}] Sinyal Terkirim ke Tab ${i}: ${nama}`;
+            log.scrollTop = log.scrollHeight;
+            
+            await new Promise(r => setTimeout(r, 800));
+            addRes(nama, i);
+        }
+        document.getElementById('btnRun').disabled = false;
+        alert("Semua Tab Berhasil Diperintah!");
+    }
+
+    function addRes(n, i) {
+        document.getElementById('u-res').classList.remove('hidden');
+        document.getElementById('u-res-list').innerHTML += `<div class="card" style="font-size:10px; margin:2px;"><b>Tab ${i}</b><br>${n}</div>`;
+    }
+
+    // --- ADMIN ACTIONS (EDIT FIX) ---
+    function renderAdmin() {
+        const body = document.getElementById('a-user-list');
+        body.innerHTML = `<tr>
+            <td>${user_profile.name}</td>
+            <td>${user_profile.mail}</td>
+            <td>${user_profile.lic}</td>
+            <td>${user_profile.limit}</td>
+            <td><button onclick="editAdminUser()" class="btn-copy">EDIT</button></td>
+        </tr>`;
+        
+        const plist = document.getElementById('ad-p-list'); plist.innerHTML = '<b>Produk:</b>';
+        products.forEach((p, i) => {
+            plist.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #233554;">
+            <span>${p.name} (${p.limit})</span><button onclick="delP(${i})" style="color:red; border:none; background:none; cursor:pointer;">X</button></div>`;
+        });
+    }
+
+    function editAdminUser() {
+        const nLic = prompt("Nama Lisensi Baru:", user_profile.lic);
+        const nLim = prompt("Limit Baru:", user_profile.limit);
+        if(nLic) user_profile.lic = nLic.toUpperCase();
+        if(nLim) user_profile.limit = parseInt(nLim);
+        localStorage.setItem('u_prof', JSON.stringify(user_profile));
+        renderAdmin();
+        alert("User Updated!");
+    }
+
+    function updateAdminRek() {
+        admin_rek = {bank: document.getElementById('ad-bank').value, num: document.getElementById('ad-rek-num').value, name: document.getElementById('ad-rek-name').value};
+        localStorage.setItem('ant_r', JSON.stringify(admin_rek));
+        alert("Rekening Diupdate!");
+    }
+
+    function addProd() {
+        const n = document.getElementById('ad-p-name').value;
+        const p = document.getElementById('ad-p-price').value;
+        const l = document.getElementById('ad-p-limit').value;
+        if(n && p && l) {
+            products.push({name: n.toUpperCase(), price: parseInt(p), limit: parseInt(l)});
+            localStorage.setItem('ant_p', JSON.stringify(products));
+            renderAdmin();
+        }
+    }
+
+    function delP(i) { products.splice(i,1); localStorage.setItem('ant_p', JSON.stringify(products)); renderAdmin(); }
+
+    // --- OTHERS ---
+    function saveAcc() {
+        user_profile.name = document.getElementById('u-name').value;
+        user_profile.mail = document.getElementById('u-mail').value;
+        localStorage.setItem('u_prof', JSON.stringify(user_profile));
+        alert("Profil Tersimpan!");
+    }
+
+    function renderUserShop() {
+        const div = document.getElementById('lic-shop-container'); 
+        div.innerHTML = '<h3>Daftar Lisensi</h3>';
+        products.forEach(p => {
+            div.innerHTML += `<div class="card"><h4>${p.name}</h4><p>Limit: ${p.limit}</p><p>Rp ${p.price.toLocaleString()}</p><button class="btn btn-accent" onclick="openPay('${p.name}', ${p.price})">BELI</button></div>`;
+        });
+    }
+
+    function openPay(n, pr) {
+        selectedLic = n;
+        document.getElementById('lic-shop-container').classList.add('hidden');
+        document.getElementById('pay-modal').classList.remove('hidden');
+        document.getElementById('pay-bank').innerText = admin_rek.bank;
+        document.getElementById('pay-num').innerText = admin_rek.num;
+        document.getElementById('pay-total').innerText = "Rp " + pr.toLocaleString();
+    }
+
+    function confirmPay() { window.open(`https://wa.me/6283854178752?text=Konfirmasi%20Lisensi%20${selectedLic}`); }
+    function copyRek() { navigator.clipboard.writeText(admin_rek.num); alert("Salin Berhasil!"); }
+
+    // --- CLOCK ---
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('realtime-clock').innerText = `${h}:${m}:${s}`;
+        document.getElementById('realtime-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        const userTime = document.getElementById('startTime').value;
+        if (userTime === `${h}:${m}` && s === "00" && !document.getElementById('btnRun').disabled) {
+            runBoot(); 
+        }
+    }
+    setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
