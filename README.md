@@ -14,7 +14,7 @@
 * **JavaScript:** Logika fungsional untuk sistem boot.
 
 ##  Cara Penggunaan
-1.  Buka link GitHub Pages kamu: `https://usernamekamus.github.io/antam-boot-system/`
+1.  Buka link GitHub Pages kamu: `Https://rivanhatt.github.io/Antam-boot.Rivan/`
 2.  Gunakan panel kontrol untuk mengelola sistem.
 3.  Edit kode melalui **Acode** atau langsung di repository ini untuk pengembangan lebih lanjut.
 
